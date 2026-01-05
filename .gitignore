@@ -1,0 +1,59 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+venv/
+env/
+ENV/
+.env
+.venv/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Project Specific
+*.pt
+*.pth
+*.ckpt
+checkpoints/
+models/
+training_data/
+datasets/
+ns-arc-demon/
+benchmark_output.txt
+benchmark_dedup_output.txt
+debug_out.txt
+demo_output.txt
+final_verify.txt
+ns_arc_final_debug.txt
+ns_arc_harness_output.txt
+ns_final_report.txt
+ns_final_report_phase6.txt
+*.log
+
+# Streamlit
+.streamlit/

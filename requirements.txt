@@ -1,0 +1,42 @@
+# HALT-NN Anti-Hallucination Pipeline Dependencies
+
+# Core
+pydantic>=2.0.0
+sqlalchemy>=2.0.0
+networkx>=3.0
+numpy>=1.24.0
+
+# Neural NLI
+transformers>=4.35.0
+torch>=2.0.0
+
+# Neural Retriever
+sentence-transformers>=2.2.0
+faiss-cpu>=1.7.4
+
+# Calibration
+scikit-learn>=1.3.0
+
+# API
+fastapi>=0.100.0
+uvicorn>=0.23.0
+
+# Utilities
+python-multipart>=0.0.6
+
+# LLM Integration
+google-generativeai>=0.3.0
+openai>=1.0.0
+
+# Vector Database
+chromadb>=0.4.0
+
+# WebSocket
+websockets>=12.0
+
+# NS-ARC Compression
+streamlit>=1.28.0
+zstandard>=0.21.0
+pillow>=10.0.0
+pandas>=2.0.0
+torchvision>=0.15.0

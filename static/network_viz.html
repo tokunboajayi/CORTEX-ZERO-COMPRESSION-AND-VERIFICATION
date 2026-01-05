@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIREN Neural Network Visualization</title>
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --accent-cyan: #06b6d4;
+            --accent-purple: #8b5cf6;
+            --accent-success: #22c55e;
+            --text-primary: #ffffff;
+            --text-muted: #71717a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .network-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 2rem;
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-x: auto;
+        }
+
+        .layer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .layer-box {
+            width: 100px;
+            padding: 20px 15px;
+            border-radius: 12px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .layer-box:hover {
+            transform: scale(1.05);
+        }
+
+        .layer-box.input {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(6, 182, 212, 0.1));
+            border: 2px solid var(--accent-cyan);
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+        }
+
+        .layer-box.hidden {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(139, 92, 246, 0.1));
+            border: 2px solid var(--accent-purple);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+        }
+
+        .layer-box.output {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.1));
+            border: 2px solid var(--accent-success);
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+        }
+
+        .layer-name {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        .layer-size {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .layer-type {
+            font-size: 0.7rem;
+            margin-top: 5px;
+            opacity: 0.8;
+        }
+
+        .arrow {
+            width: 40px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+            position: relative;
+        }
+
+        .arrow::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: -4px;
+            border: 5px solid transparent;
+            border-left-color: var(--accent-purple);
+        }
+
+        .formula {
+            margin-top: 2rem;
+            padding: 1rem 2rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+        }
+
+        .formula span {
+            color: var(--accent-cyan);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-top: 2rem;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .stat {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--accent-cyan);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        .sine-wave {
+            width: 30px;
+            height: 15px;
+            margin: 5px auto;
+        }
+
+        .sine-wave path {
+            stroke: var(--accent-purple);
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .details {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .details h3 {
+            margin-bottom: 1rem;
+            color: var(--accent-cyan);
+        }
+
+        .details p {
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 0.5rem;
+        }
+
+        .code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>SIREN Neural Network</h1>
+    <p class="subtitle">Implicit Neural Representation for Image Compression</p>
+
+    <div class="network-container">
+        <div class="layer">
+            <div class="layer-box input">
+                <div class="layer-size">2</div>
+                <div class="layer-type">(x, y)</div>
+            </div>
+            <div class="layer-name">Input</div>
+        </div>
+
+        <div class="arrow"></div>
+
+        <div class="layer">
+            <div class="layer-box hidden">
+                <svg class="sine-wave" viewBox="0 0 30 15">
+                    <path d="M0,7.5 Q7.5,0 15,7.5 T30,7.5" />
+                </svg>
+                <div class="layer-size">256</div>
+                <div class="layer-type">sin(w*x)</div>
+            </div>
+            <div class="layer-name">Sine Layer 1</div>
+        </div>
+
+        <div class="arrow"></div>
+
+        <div class="layer">
+            <div class="layer-box hidden">
+                <svg class="sine-wave" viewBox="0 0 30 15">
+                    <path d="M0,7.5 Q7.5,0 15,7.5 T30,7.5" />
+                </svg>
+                <div class="layer-size">256</div>
+                <div class="layer-type">sin(w*x)</div>
+            </div>
+            <div class="layer-name">Sine Layer 2</div>
+        </div>
+
+        <div class="arrow"></div>
+
+        <div class="layer">
+            <div class="layer-box hidden">
+                <svg class="sine-wave" viewBox="0 0 30 15">
+                    <path d="M0,7.5 Q7.5,0 15,7.5 T30,7.5" />
+                </svg>
+                <div class="layer-size">256</div>
+                <div class="layer-type">sin(w*x)</div>
+            </div>
+            <div class="layer-name">Sine Layer 3</div>
+        </div>
+
+        <div class="arrow"></div>
+
+        <div class="layer">
+            <div class="layer-box hidden">
+                <svg class="sine-wave" viewBox="0 0 30 15">
+                    <path d="M0,7.5 Q7.5,0 15,7.5 T30,7.5" />
+                </svg>
+                <div class="layer-size">256</div>
+                <div class="layer-type">sin(w*x)</div>
+            </div>
+            <div class="layer-name">Sine Layer 4</div>
+        </div>
+
+        <div class="arrow"></div>
+
+        <div class="layer">
+            <div class="layer-box output">
+                <div class="layer-size">3</div>
+                <div class="layer-type">RGB</div>
+            </div>
+            <div class="layer-name">Output</div>
+        </div>
+    </div>
+
+    <div class="formula">
+        Activation: <span>sin(omega_0 * (Wx + b))</span> where omega_0 = 30
+    </div>
+
+    <div class="stats">
+        <div class="stat">
+            <div class="stat-value">200K</div>
+            <div class="stat-label">Parameters</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value">5</div>
+            <div class="stat-label">Layers</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value">30</div>
+            <div class="stat-label">Omega_0</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value">~0.8x</div>
+            <div class="stat-label">Compression</div>
+        </div>
+    </div>
+
+    <div class="details">
+        <h3>How SIREN Works</h3>
+        <p><strong>SIREN</strong> (Sinusoidal Representation Network) uses periodic sine activations instead of ReLU to
+            represent continuous signals like images.</p>
+        <p>Given (x, y) coordinates, it outputs the RGB color at that position. The entire image is encoded in the
+            network weights.</p>
+        <p><strong>Compression:</strong> A 256x256 image (192KB) can be compressed to ~200KB of network weights.</p>
+
+        <div class="code">
+            class SirenNet(nn.Module):
+            # Input: (x, y) coordinates
+            # Output: RGB values
+
+            SineLayer(2 -> 256, omega=30, is_first=True)
+            SineLayer(256 -> 256, omega=30)
+            SineLayer(256 -> 256, omega=30)
+            SineLayer(256 -> 256, omega=30)
+            Linear(256 -> 3) # RGB output
+        </div>
+    </div>
+
+    <script>
+        // Add hover animations
+        document.querySelectorAll('.layer-box').forEach(box => {
+            box.addEventListener('mouseenter', () => {
+                box.style.transition = 'all 0.3s ease';
+            });
+        });
+    </script>
+</body>
+
+</html>

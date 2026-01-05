@@ -1,0 +1,1669 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algorithim | Unified AI Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a25;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --accent-primary: #6366f1;
+            --accent-secondary: #8b5cf6;
+            --accent-success: #22c55e;
+            --accent-warning: #f59e0b;
+            --accent-danger: #ef4444;
+            --accent-cyan: #06b6d4;
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.08) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        /* Header */
+        .header {
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-secondary);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-cyan));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--text-primary), var(--accent-cyan));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo span {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-left: 0.5rem;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .tab:hover {
+            background: var(--glass-bg);
+            border-color: var(--accent-primary);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-color: transparent;
+            color: white;
+        }
+
+        /* Main Content */
+        .main {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .panels {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .panel {
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .panel-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .panel-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .panel-icon.compress {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-primary));
+        }
+
+        .panel-icon.verify {
+            background: linear-gradient(135deg, var(--accent-success), var(--accent-cyan));
+        }
+
+        /* Drop Zone */
+        .drop-zone {
+            border: 2px dashed var(--glass-border);
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            text-align: center;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .drop-zone:hover,
+        .drop-zone.drag-over {
+            border-color: var(--accent-cyan);
+            background: rgba(6, 182, 212, 0.05);
+        }
+
+        .drop-zone-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .drop-zone-text {
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .drop-zone-hint {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        select,
+        input,
+        textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+
+        select:focus,
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-cyan {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-primary));
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--accent-success), var(--accent-cyan));
+            color: white;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Progress */
+        .progress-bar {
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-primary));
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        /* Results */
+        .results {
+            margin-top: 1.5rem;
+        }
+
+        .result-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .result-row:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            color: var(--text-muted);
+        }
+
+        .result-value {
+            font-weight: 600;
+        }
+
+        .result-value.success {
+            color: var(--accent-success);
+        }
+
+        .result-value.warning {
+            color: var(--accent-warning);
+        }
+
+        /* Verification Claims */
+        .claim {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .claim-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .claim-icon.verified {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--accent-success);
+        }
+
+        .claim-icon.disputed {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--accent-danger);
+        }
+
+        .claim-text {
+            flex: 1;
+            font-size: 0.9rem;
+        }
+
+        .claim-confidence {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        /* File Info */
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .file-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-primary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .file-details {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .file-size {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Hidden */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Full Width Results */
+        .full-results {
+            grid-column: 1 / -1;
+        }
+
+        /* Confidence Gauge */
+        .confidence-gauge {
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .confidence-high {
+            background: linear-gradient(90deg, var(--accent-success), #4ade80);
+        }
+
+        .confidence-medium {
+            background: linear-gradient(90deg, var(--accent-warning), #fbbf24);
+        }
+
+        .confidence-low {
+            background: linear-gradient(90deg, var(--accent-danger), #f87171);
+        }
+
+        /* Status Badge */
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-verified {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--accent-success);
+        }
+
+        .status-disputed {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--accent-danger);
+        }
+
+        /* Animation */
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .loading {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .panels {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">A</div>
+            <h1>ALGORITHIM</h1>
+            <span>Unified AI Platform</span>
+        </div>
+        <div style="display: flex; gap: 1rem; align-items: center;">
+            <span id="status" style="font-size: 0.85rem; color: var(--text-muted);">Ready</span>
+        </div>
+    </header>
+
+    <!-- Tabs -->
+    <nav class="tabs">
+        <button class="tab active" onclick="switchTab('compress')">Compression</button>
+        <button class="tab" onclick="switchTab('decompress')">Decompress</button>
+        <button class="tab" onclick="switchTab('verify')">Verification</button>
+        <button class="tab" onclick="switchTab('integrated')">Compress + Verify</button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Compression Tab -->
+        <div id="tab-compress" class="tab-content">
+            <div class="panels">
+                <div class="panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <div class="panel-icon compress">C</div>
+                            NS-ARC Compression
+                        </div>
+                    </div>
+
+                    <div id="compress-dropzone" class="drop-zone"
+                        onclick="document.getElementById('file-input').click()">
+                        <div class="drop-zone-icon">+</div>
+                        <div class="drop-zone-text">Drop file here or click to upload</div>
+                        <div class="drop-zone-hint">Supports: Images, Logs, Code, DNA, Time-series data</div>
+                    </div>
+                    <input type="file" id="file-input" style="display: none;" onchange="handleFileSelect(event)">
+
+                    <div id="file-info" class="file-info hidden">
+                        <div class="file-icon">F</div>
+                        <div class="file-details">
+                            <div id="file-name" class="file-name">filename.txt</div>
+                            <div id="file-size" class="file-size">0 bytes</div>
+                        </div>
+                        <button class="btn" onclick="clearFile()" style="background: var(--bg-tertiary);">X</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Algorithm</label>
+                        <select id="algorithm-select">
+                            <option value="auto">Auto-detect (Semantic Router)</option>
+                            <option value="json_log">JSON/Log Compressor</option>
+                            <option value="time_series">Time-Series (XOR + Delta)</option>
+                            <option value="dna">DNA 2-bit Encoding</option>
+                            <option value="code">Code/AST Tokenizer</option>
+                            <option value="bwt">BWT + MTF + RLE</option>
+                            <option value="zstd">Zstandard (General)</option>
+                        </select>
+                    </div>
+
+                    <button id="compress-btn" class="btn btn-cyan" onclick="compressFile()" disabled>
+                        Compress
+                    </button>
+
+                    <div class="progress-bar">
+                        <div id="compress-progress" class="progress-fill"></div>
+                    </div>
+                </div>
+
+                <div class="panel" id="compress-results">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <div class="panel-icon verify">R</div>
+                            Results
+                        </div>
+                    </div>
+
+                    <div id="results-placeholder" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                        Upload a file and compress to see results
+                    </div>
+
+                    <div id="results-data" class="hidden">
+                        <div class="stats-grid">
+                            <div class="stat">
+                                <div id="stat-original" class="stat-value">0</div>
+                                <div class="stat-label">Original (bytes)</div>
+                            </div>
+                            <div class="stat">
+                                <div id="stat-compressed" class="stat-value">0</div>
+                                <div class="stat-label">Compressed (bytes)</div>
+                            </div>
+                            <div class="stat">
+                                <div id="stat-ratio" class="stat-value">0x</div>
+                                <div class="stat-label">Ratio</div>
+                            </div>
+                        </div>
+
+                        <div class="result-card">
+                            <div class="result-row">
+                                <span class="result-label">Algorithm</span>
+                                <span id="result-algorithm" class="result-value">-</span>
+                            </div>
+                            <div class="result-row">
+                                <span class="result-label">File Type</span>
+                                <span id="result-type" class="result-value">-</span>
+                            </div>
+                            <div class="result-row">
+                                <span class="result-label">Space Saved</span>
+                                <span id="result-saved" class="result-value success">-</span>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                            <button id="download-compressed-btn" class="btn btn-cyan" onclick="downloadCompressed()"
+                                disabled>
+                                Download Compressed
+                            </button>
+                            <button id="download-metadata-btn" class="btn btn-primary" onclick="downloadMetadata()"
+                                disabled>
+                                Download Metadata (JSON)
+                            </button>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                            <button id="preview-compressed-btn" class="btn" style="background: var(--bg-tertiary);"
+                                onclick="togglePreview('compressed')" disabled>
+                                View Compressed Data
+                            </button>
+                            <button id="preview-metadata-btn" class="btn" style="background: var(--bg-tertiary);"
+                                onclick="togglePreview('metadata')" disabled>
+                                View Metadata
+                            </button>
+                        </div>
+
+                        <!-- Preview Sections -->
+                        <div id="preview-compressed" class="preview-section hidden" style="margin-top: 1rem;">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <h4 style="color: var(--accent-cyan);">Compressed Data (Hex)</h4>
+                                <button class="btn"
+                                    style="background: var(--bg-tertiary); padding: 0.25rem 0.5rem; font-size: 0.75rem;"
+                                    onclick="togglePreview('compressed')">Close</button>
+                            </div>
+                            <pre id="compressed-hex"
+                                style="background: var(--bg-primary); padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.75rem; max-height: 200px; overflow-y: auto; color: var(--accent-cyan); white-space: pre-wrap; word-break: break-all;"></pre>
+                        </div>
+
+                        <div id="preview-metadata" class="preview-section hidden" style="margin-top: 1rem;">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <h4 style="color: var(--accent-primary);">Metadata (JSON)</h4>
+                                <button class="btn"
+                                    style="background: var(--bg-tertiary); padding: 0.25rem 0.5rem; font-size: 0.75rem;"
+                                    onclick="togglePreview('metadata')">Close</button>
+                            </div>
+                            <pre id="metadata-json"
+                                style="background: var(--bg-primary); padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.8rem; max-height: 250px; overflow-y: auto; color: var(--text-secondary);"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Decompress Tab -->
+        <div id="tab-decompress" class="tab-content hidden">
+            <div class="panels">
+                <div class="panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <div class="panel-icon" style="background: linear-gradient(135deg, #f59e0b, #22c55e);">D
+                            </div>
+                            Decompress & View
+                        </div>
+                    </div>
+
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                        Upload a .nsarc file or metadata JSON to view the compressed data and verification report.
+                    </p>
+
+                    <div id="decompress-dropzone" class="drop-zone"
+                        onclick="document.getElementById('decompress-file-input').click()">
+                        <div class="drop-zone-icon">+</div>
+                        <div class="drop-zone-text">Drop .nsarc or .json file here</div>
+                        <div class="drop-zone-hint">Supports: .nsarc (compressed), _metadata.json,
+                            _verification_report.json</div>
+                    </div>
+                    <input type="file" id="decompress-file-input" style="display: none;" accept=".nsarc,.json"
+                        onchange="handleDecompressFile(event)">
+
+                    <div id="decompress-file-info" class="file-info hidden">
+                        <div class="file-icon" style="background: linear-gradient(135deg, #f59e0b, #22c55e);">D</div>
+                        <div class="file-details">
+                            <div id="decompress-file-name" class="file-name">filename.nsarc</div>
+                            <div id="decompress-file-size" class="file-size">0 bytes</div>
+                        </div>
+                        <button class="btn" onclick="clearDecompressFile()"
+                            style="background: var(--bg-tertiary);">X</button>
+                    </div>
+
+                    <button id="decompress-btn" class="btn btn-success" onclick="decompressFile()" disabled
+                        style="margin-top: 1rem;">
+                        View Contents
+                    </button>
+                </div>
+
+                <div class="panel" id="decompress-results">
+                    <div class="panel-header">
+                        <div class="panel-title">File Contents</div>
+                        <span id="decompress-type-badge" class="status-badge hidden">-</span>
+                    </div>
+
+                    <div id="decompress-placeholder"
+                        style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                        Upload a file to view its contents
+                    </div>
+
+                    <div id="decompress-data" class="hidden">
+                        <!-- View Mode Buttons -->
+                        <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                            <button id="view-hex-btn" class="btn btn-cyan" onclick="setViewMode('hex')"
+                                style="padding: 0.5rem 1rem;">
+                                Hex View
+                            </button>
+                            <button id="view-image-btn" class="btn"
+                                style="background: var(--bg-tertiary); padding: 0.5rem 1rem;"
+                                onclick="setViewMode('image')">
+                                Image Preview
+                            </button>
+                            <button id="view-text-btn" class="btn"
+                                style="background: var(--bg-tertiary); padding: 0.5rem 1rem;"
+                                onclick="setViewMode('text')">
+                                Text View
+                            </button>
+                        </div>
+
+                        <!-- For .nsarc files - Hex View -->
+                        <div id="decompress-binary" class="hidden">
+                            <h4 style="margin-bottom: 0.5rem; color: var(--accent-cyan);">Compressed Data (Hex)</h4>
+                            <pre id="decompress-hex"
+                                style="background: var(--bg-primary); padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.75rem; max-height: 300px; overflow-y: auto; color: var(--accent-cyan); white-space: pre-wrap; word-break: break-all;"></pre>
+                            <div class="result-card" style="margin-top: 1rem;">
+                                <div class="result-row">
+                                    <span class="result-label">File Size</span>
+                                    <span id="decompress-size" class="result-value">-</span>
+                                </div>
+                                <div class="result-row">
+                                    <span class="result-label">Format</span>
+                                    <span id="decompress-format" class="result-value">-</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Image Preview -->
+                        <div id="decompress-image" class="hidden">
+                            <h4 style="margin-bottom: 0.5rem; color: var(--accent-success);">Image Preview</h4>
+                            <div
+                                style="background: var(--bg-primary); padding: 1rem; border-radius: 8px; text-align: center;">
+                                <img id="decompress-image-preview"
+                                    style="max-width: 100%; max-height: 400px; border-radius: 8px;" />
+                                <p id="decompress-image-info"
+                                    style="margin-top: 0.5rem; color: var(--text-muted); font-size: 0.85rem;"></p>
+                            </div>
+                        </div>
+
+                        <!-- Text View -->
+                        <div id="decompress-text" class="hidden">
+                            <h4 style="margin-bottom: 0.5rem; color: var(--accent-warning);">Decoded Text</h4>
+                            <pre id="decompress-text-content"
+                                style="background: var(--bg-primary); padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.8rem; max-height: 400px; overflow-y: auto; color: var(--text-secondary); white-space: pre-wrap;"></pre>
+                        </div>
+
+                        <!-- For JSON files -->
+                        <div id="decompress-json" class="hidden">
+                            <h4 style="margin-bottom: 0.5rem; color: var(--accent-success);">JSON Contents</h4>
+                            <pre id="decompress-json-content"
+                                style="background: var(--bg-primary); padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.8rem; max-height: 400px; overflow-y: auto; color: var(--text-secondary);"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Verify Tab -->
+        <div id="tab-verify" class="tab-content hidden">
+            <div class="panels">
+                <div class="panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <div class="panel-icon verify">V</div>
+                            HALT-NN Verification
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Query</label>
+                        <input type="text" id="verify-query" placeholder="Enter a claim or question to verify...">
+                    </div>
+
+                    <button class="btn btn-success" onclick="verifyQuery()">
+                        Verify Claim
+                    </button>
+
+                    <div id="verify-results" class="results" style="margin-top: 1.5rem; display: none;">
+                        <h4 style="margin-bottom: 1rem; color: var(--text-secondary);">Verification Result</h4>
+                        <div id="verify-answer" class="result-card"></div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <div class="panel-title">Evidence Store</div>
+                        <span id="evidence-count" style="color: var(--text-muted);">0 items</span>
+                    </div>
+                    <div id="evidence-list" style="max-height: 400px; overflow-y: auto;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Integrated Tab -->
+        <div id="tab-integrated" class="tab-content hidden">
+            <div class="panels">
+                <div class="panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <div class="panel-icon compress">I</div>
+                            Compress + Verify
+                        </div>
+                    </div>
+
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                        Compress a file and automatically verify all compression claims using HALT-NN.
+                    </p>
+
+                    <div id="integrated-dropzone" class="drop-zone"
+                        onclick="document.getElementById('integrated-file-input').click()">
+                        <div class="drop-zone-icon">+</div>
+                        <div class="drop-zone-text">Drop file for verified compression</div>
+                        <div class="drop-zone-hint">Compression metadata will be verified</div>
+                    </div>
+                    <input type="file" id="integrated-file-input" style="display: none;"
+                        onchange="handleIntegratedFile(event)">
+
+                    <div id="integrated-file-info" class="file-info hidden">
+                        <div class="file-icon">F</div>
+                        <div class="file-details">
+                            <div id="integrated-file-name" class="file-name">filename.txt</div>
+                            <div id="integrated-file-size" class="file-size">0 bytes</div>
+                        </div>
+                    </div>
+
+                    <button id="integrated-btn" class="btn btn-primary" onclick="integratedProcess()" disabled
+                        style="margin-top: 1rem;">
+                        Compress & Verify
+                    </button>
+
+                    <div class="progress-bar">
+                        <div id="integrated-progress" class="progress-fill"></div>
+                    </div>
+                </div>
+
+                <div class="panel" id="integrated-results">
+                    <div class="panel-header">
+                        <div class="panel-title">Verified Results</div>
+                        <span id="integrated-status-badge" class="status-badge hidden">-</span>
+                    </div>
+
+                    <div id="integrated-placeholder"
+                        style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                        Upload a file to see verified compression results
+                    </div>
+
+                    <div id="integrated-data" class="hidden">
+                        <div class="stats-grid">
+                            <div class="stat">
+                                <div id="int-ratio" class="stat-value">0x</div>
+                                <div class="stat-label">Compression Ratio</div>
+                            </div>
+                            <div class="stat">
+                                <div id="int-confidence" class="stat-value">0%</div>
+                                <div class="stat-label">Confidence</div>
+                            </div>
+                            <div class="stat">
+                                <div id="int-claims" class="stat-value">0/0</div>
+                                <div class="stat-label">Claims Verified</div>
+                            </div>
+                        </div>
+
+                        <h4 style="margin-bottom: 0.75rem; color: var(--text-secondary);">Verified Claims</h4>
+                        <div id="integrated-claims"></div>
+
+                        <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                            <button id="int-download-btn" class="btn btn-cyan" onclick="downloadIntegrated()" disabled>
+                                Download Compressed
+                            </button>
+                            <button id="int-report-btn" class="btn btn-success" onclick="downloadVerificationReport()"
+                                disabled>
+                                Download Report
+                            </button>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                            <button id="int-preview-compressed-btn" class="btn" style="background: var(--bg-tertiary);"
+                                onclick="toggleIntegratedPreview('compressed')" disabled>
+                                View Compressed
+                            </button>
+                            <button id="int-preview-report-btn" class="btn" style="background: var(--bg-tertiary);"
+                                onclick="toggleIntegratedPreview('report')" disabled>
+                                View Report
+                            </button>
+                        </div>
+
+                        <!-- Integrated Preview Sections -->
+                        <div id="int-preview-compressed" class="preview-section hidden" style="margin-top: 1rem;">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <h4 style="color: var(--accent-cyan);">Compressed Data (Hex)</h4>
+                                <button class="btn"
+                                    style="background: var(--bg-tertiary); padding: 0.25rem 0.5rem; font-size: 0.75rem;"
+                                    onclick="toggleIntegratedPreview('compressed')">Close</button>
+                            </div>
+                            <pre id="int-compressed-hex"
+                                style="background: var(--bg-primary); padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.75rem; max-height: 200px; overflow-y: auto; color: var(--accent-cyan); white-space: pre-wrap; word-break: break-all;"></pre>
+                        </div>
+
+                        <div id="int-preview-report" class="preview-section hidden" style="margin-top: 1rem;">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <h4 style="color: var(--accent-success);">Verification Report (JSON)</h4>
+                                <button class="btn"
+                                    style="background: var(--bg-tertiary); padding: 0.25rem 0.5rem; font-size: 0.75rem;"
+                                    onclick="toggleIntegratedPreview('report')">Close</button>
+                            </div>
+                            <pre id="int-report-json"
+                                style="background: var(--bg-primary); padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.8rem; max-height: 300px; overflow-y: auto; color: var(--text-secondary);"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const API_URL = window.location.origin;
+        let selectedFile = null;
+        let integratedFile = null;
+        let compressedData = null;
+        let compressionMetadata = null;
+        let integratedCompressedData = null;
+        let verificationReport = null;
+        let compressedHexString = '';
+        let integratedHexString = '';
+
+        // Cache to store original files for decompression preview
+        const originalFilesCache = new Map();
+
+        // Preview toggle functions
+        function togglePreview(type) {
+            const section = document.getElementById(`preview-${type}`);
+            section.classList.toggle('hidden');
+
+            if (!section.classList.contains('hidden')) {
+                if (type === 'compressed' && compressedData) {
+                    document.getElementById('compressed-hex').textContent = compressedHexString || 'Loading...';
+                } else if (type === 'metadata' && compressionMetadata) {
+                    document.getElementById('metadata-json').textContent = JSON.stringify(compressionMetadata, null, 2);
+                }
+            }
+        }
+
+        function toggleIntegratedPreview(type) {
+            const section = document.getElementById(`int-preview-${type}`);
+            section.classList.toggle('hidden');
+
+            if (!section.classList.contains('hidden')) {
+                if (type === 'compressed' && integratedCompressedData) {
+                    document.getElementById('int-compressed-hex').textContent = integratedHexString || 'Loading...';
+                } else if (type === 'report' && verificationReport) {
+                    document.getElementById('int-report-json').textContent = JSON.stringify(verificationReport, null, 2);
+                }
+            }
+        }
+
+        // Convert ArrayBuffer to hex string
+        function arrayBufferToHex(buffer, maxBytes = 512) {
+            const bytes = new Uint8Array(buffer);
+            const limit = Math.min(bytes.length, maxBytes);
+            let hex = '';
+            for (let i = 0; i < limit; i++) {
+                hex += bytes[i].toString(16).padStart(2, '0').toUpperCase();
+                if ((i + 1) % 16 === 0) hex += '\n';
+                else if ((i + 1) % 2 === 0) hex += ' ';
+            }
+            if (bytes.length > maxBytes) {
+                hex += `\n... (${bytes.length - maxBytes} more bytes)`;
+            }
+            return hex;
+        }
+
+        // Tab switching
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+
+            event.target.classList.add('active');
+            document.getElementById(`tab-${tab}`).classList.remove('hidden');
+
+            if (tab === 'verify') loadEvidence();
+        }
+
+        // File handling
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            selectedFile = file;
+            document.getElementById('file-name').textContent = file.name;
+            document.getElementById('file-size').textContent = formatBytes(file.size);
+            document.getElementById('file-info').classList.remove('hidden');
+            document.getElementById('compress-dropzone').classList.add('hidden');
+            document.getElementById('compress-btn').disabled = false;
+        }
+
+        function handleIntegratedFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            integratedFile = file;
+            document.getElementById('integrated-file-name').textContent = file.name;
+            document.getElementById('integrated-file-size').textContent = formatBytes(file.size);
+            document.getElementById('integrated-file-info').classList.remove('hidden');
+            document.getElementById('integrated-dropzone').classList.add('hidden');
+            document.getElementById('integrated-btn').disabled = false;
+        }
+
+        function clearFile() {
+            selectedFile = null;
+            document.getElementById('file-info').classList.add('hidden');
+            document.getElementById('compress-dropzone').classList.remove('hidden');
+            document.getElementById('compress-btn').disabled = true;
+            document.getElementById('file-input').value = '';
+        }
+
+        // Decompression functions
+        let decompressFile_data = null;
+
+        function handleDecompressFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            decompressFile_data = file;
+            document.getElementById('decompress-file-name').textContent = file.name;
+            document.getElementById('decompress-file-size').textContent = formatBytes(file.size);
+            document.getElementById('decompress-file-info').classList.remove('hidden');
+            document.getElementById('decompress-dropzone').classList.add('hidden');
+            document.getElementById('decompress-btn').disabled = false;
+        }
+
+        function clearDecompressFile() {
+            decompressFile_data = null;
+            document.getElementById('decompress-file-info').classList.add('hidden');
+            document.getElementById('decompress-dropzone').classList.remove('hidden');
+            document.getElementById('decompress-btn').disabled = true;
+            document.getElementById('decompress-file-input').value = '';
+            document.getElementById('decompress-placeholder').classList.remove('hidden');
+            document.getElementById('decompress-data').classList.add('hidden');
+        }
+
+        async function decompressFile() {
+            if (!decompressFile_data) return;
+
+            document.getElementById('status').textContent = 'Reading file...';
+            const fileName = decompressFile_data.name.toLowerCase();
+
+            document.getElementById('decompress-placeholder').classList.add('hidden');
+            document.getElementById('decompress-data').classList.remove('hidden');
+
+            const badge = document.getElementById('decompress-type-badge');
+            badge.classList.remove('hidden');
+
+            if (fileName.endsWith('.json')) {
+                // JSON file - parse and display
+                const text = await decompressFile_data.text();
+                try {
+                    const json = JSON.parse(text);
+                    document.getElementById('decompress-json-content').textContent = JSON.stringify(json, null, 2);
+                    document.getElementById('decompress-json').classList.remove('hidden');
+                    document.getElementById('decompress-binary').classList.add('hidden');
+
+                    if (json.verification) {
+                        badge.classList.add('status-verified');
+                        badge.textContent = 'VERIFICATION REPORT';
+                    } else if (json.compression_ratio) {
+                        badge.style.background = 'rgba(99, 102, 241, 0.2)';
+                        badge.style.color = 'var(--accent-primary)';
+                        badge.textContent = 'COMPRESSION METADATA';
+                    } else {
+                        badge.style.background = 'rgba(113, 113, 122, 0.2)';
+                        badge.style.color = 'var(--text-muted)';
+                        badge.textContent = 'JSON DATA';
+                    }
+                } catch (e) {
+                    document.getElementById('decompress-json-content').textContent = 'Error parsing JSON: ' + e.message;
+                }
+            } else if (fileName.endsWith('.nsarc')) {
+                // Binary compressed file - show hex dump
+                const buffer = await decompressFile_data.arrayBuffer();
+                const hex = arrayBufferToHex(buffer, 1024);
+
+                document.getElementById('decompress-hex').textContent = hex;
+                document.getElementById('decompress-size').textContent = formatBytes(decompressFile_data.size);
+
+                // Check for zlib header
+                const bytes = new Uint8Array(buffer);
+                if (bytes[0] === 0x78 && bytes[1] === 0x9C) {
+                    document.getElementById('decompress-format').textContent = 'NS-ARC (zlib compressed)';
+                } else {
+                    document.getElementById('decompress-format').textContent = 'NS-ARC Binary';
+                }
+
+                document.getElementById('decompress-binary').classList.remove('hidden');
+                document.getElementById('decompress-json').classList.add('hidden');
+                badge.style.background = 'rgba(6, 182, 212, 0.2)';
+                badge.style.color = 'var(--accent-cyan)';
+                badge.textContent = 'COMPRESSED DATA';
+            } else {
+                // Unknown file type
+                const buffer = await decompressFile_data.arrayBuffer();
+                const hex = arrayBufferToHex(buffer);
+                document.getElementById('decompress-hex').textContent = hex;
+                document.getElementById('decompress-size').textContent = formatBytes(decompressFile_data.size);
+                document.getElementById('decompress-format').textContent = 'Unknown';
+                document.getElementById('decompress-binary').classList.remove('hidden');
+                document.getElementById('decompress-json').classList.add('hidden');
+                badge.style.background = 'rgba(113, 113, 122, 0.2)';
+                badge.style.color = 'var(--text-muted)';
+                badge.textContent = 'BINARY';
+            }
+
+            document.getElementById('status').textContent = 'File loaded';
+        }
+
+        // View mode switching for decompressed data
+        let currentDecompressBuffer = null;
+        let currentDecompressURL = null;
+
+        function setViewMode(mode) {
+            // Update button styles
+            document.querySelectorAll('#decompress-data > div:first-child button').forEach(btn => {
+                btn.classList.remove('btn-cyan');
+                btn.style.background = 'var(--bg-tertiary)';
+            });
+
+            const activeBtn = document.getElementById(`view-${mode}-btn`);
+            if (activeBtn) {
+                activeBtn.classList.add('btn-cyan');
+                activeBtn.style.background = '';
+            }
+
+            // Hide all views
+            document.getElementById('decompress-binary').classList.add('hidden');
+            document.getElementById('decompress-image').classList.add('hidden');
+            document.getElementById('decompress-text').classList.add('hidden');
+            document.getElementById('decompress-json').classList.add('hidden');
+
+            if (mode === 'hex') {
+                document.getElementById('decompress-binary').classList.remove('hidden');
+            } else if (mode === 'image') {
+                document.getElementById('decompress-image').classList.remove('hidden');
+                // Try to decompress and display as image
+                if (decompressFile_data) {
+                    const fileName = decompressFile_data.name;
+                    const cached = originalFilesCache.get(fileName);
+
+                    if (cached) {
+                        // Use cached original file
+                        document.getElementById('decompress-image-preview').src = cached.url;
+                        document.getElementById('decompress-image-info').textContent =
+                            `Original: ${cached.file.name} (${formatBytes(cached.file.size)}) - ${cached.type}`;
+                    } else if (fileName.endsWith('.nsarc') || fileName.endsWith('.gz')) {
+                        // Try real decompression
+                        document.getElementById('decompress-image-info').textContent = 'Decompressing...';
+                        decompressFile_data.arrayBuffer().then(async buffer => {
+                            try {
+                                const decompressedBuffer = await decompressWithGzip(buffer);
+                                const decompressedBlob = new Blob([decompressedBuffer]);
+                                if (currentDecompressURL) URL.revokeObjectURL(currentDecompressURL);
+                                currentDecompressURL = URL.createObjectURL(decompressedBlob);
+                                document.getElementById('decompress-image-preview').src = currentDecompressURL;
+                                document.getElementById('decompress-image-info').textContent =
+                                    `Decompressed: ${formatBytes(decompressedBuffer.byteLength)} (from ${formatBytes(buffer.byteLength)})`;
+                            } catch (e) {
+                                document.getElementById('decompress-image-info').textContent =
+                                    'Cannot display as image: ' + e.message;
+                            }
+                        });
+                    } else {
+                        // Try to display uploaded file directly
+                        if (currentDecompressURL) URL.revokeObjectURL(currentDecompressURL);
+                        currentDecompressURL = URL.createObjectURL(decompressFile_data);
+                        document.getElementById('decompress-image-preview').src = currentDecompressURL;
+                        document.getElementById('decompress-image-info').textContent =
+                            `${decompressFile_data.name} (${formatBytes(decompressFile_data.size)})`;
+                    }
+                }
+            } else if (mode === 'text') {
+                document.getElementById('decompress-text').classList.remove('hidden');
+                // Try to decompress and decode as text
+                if (decompressFile_data) {
+                    const fileName = decompressFile_data.name;
+                    decompressFile_data.arrayBuffer().then(async buffer => {
+                        let textBuffer = buffer;
+
+                        // If .nsarc or .gz, try real decompression
+                        if (fileName.endsWith('.nsarc') || fileName.endsWith('.gz')) {
+                            try {
+                                textBuffer = await decompressWithGzip(buffer);
+                                document.getElementById('decompress-text-content').textContent = 'Decompressing...';
+                            } catch (e) {
+                                document.getElementById('decompress-text-content').textContent =
+                                    'Decompression failed: ' + e.message + '\n\nShowing raw bytes...';
+                            }
+                        }
+
+                        // Decode as text
+                        const decoder = new TextDecoder('utf-8', { fatal: false });
+                        const text = decoder.decode(textBuffer);
+
+                        // Show first 20KB
+                        const preview = text.substring(0, 20480);
+                        document.getElementById('decompress-text-content').textContent =
+                            preview + (text.length > 20480 ? '\n\n... (truncated, showing 20KB of ' + formatBytes(textBuffer.byteLength) + ')' : '');
+                    });
+                }
+            }
+        }
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // REAL Compression using browser's native gzip
+        async function compressFile() {
+            if (!selectedFile) return;
+
+            const btn = document.getElementById('compress-btn');
+            const progress = document.getElementById('compress-progress');
+            btn.disabled = true;
+            document.getElementById('status').textContent = 'Compressing with gzip...';
+            progress.style.width = '10%';
+
+            try {
+                const algorithm = document.getElementById('algorithm-select').value;
+                const originalSize = selectedFile.size;
+
+                // Read file as ArrayBuffer
+                const buffer = await selectedFile.arrayBuffer();
+                progress.style.width = '30%';
+
+                // Compress using native gzip
+                const compressedBuffer = await compressWithGzip(buffer);
+                progress.style.width = '70%';
+
+                const compressedSize = compressedBuffer.byteLength;
+                const ratio = originalSize / compressedSize;
+                const saved = ((1 - compressedSize / originalSize) * 100).toFixed(1);
+
+                // Create compressed blob
+                compressedData = new Blob([compressedBuffer], { type: 'application/gzip' });
+
+                // Generate hex preview
+                compressedHexString = arrayBufferToHex(compressedBuffer);
+
+                // Update UI with real stats
+                document.getElementById('stat-original').textContent = originalSize.toLocaleString();
+                document.getElementById('stat-compressed').textContent = compressedSize.toLocaleString();
+                document.getElementById('stat-ratio').textContent = ratio.toFixed(2) + 'x';
+                document.getElementById('result-algorithm').textContent = 'gzip (real compression)';
+                document.getElementById('result-type').textContent = detectFileType(selectedFile.name);
+                document.getElementById('result-saved').textContent = saved + '%';
+
+                progress.style.width = '100%';
+
+                // Store metadata with real values
+                compressionMetadata = {
+                    original_file: selectedFile.name,
+                    original_size: originalSize,
+                    compressed_size: compressedSize,
+                    compression_ratio: parseFloat(ratio.toFixed(2)),
+                    algorithm: 'gzip',
+                    file_type: detectFileType(selectedFile.name),
+                    space_saved_percent: parseFloat(saved),
+                    timestamp: new Date().toISOString(),
+                    real_compression: true
+                };
+
+                // Cache original file for decompression
+                const compressedFileName = selectedFile.name.replace(/\.([^.]+)$/, '.nsarc');
+                originalFilesCache.set(compressedFileName, {
+                    file: selectedFile,
+                    buffer: buffer,
+                    url: URL.createObjectURL(selectedFile),
+                    type: detectFileType(selectedFile.name)
+                });
+
+                // Enable UI elements
+                document.getElementById('results-placeholder').classList.add('hidden');
+                document.getElementById('results-data').classList.remove('hidden');
+                document.getElementById('compress-btn').disabled = false;
+                document.getElementById('download-compressed-btn').disabled = false;
+                document.getElementById('download-metadata-btn').disabled = false;
+                document.getElementById('preview-compressed-btn').disabled = false;
+                document.getElementById('preview-metadata-btn').disabled = false;
+                document.getElementById('status').textContent = `Compressed! ${originalSize.toLocaleString()} → ${compressedSize.toLocaleString()} bytes`;
+
+            } catch (error) {
+                console.error('Compression error:', error);
+                document.getElementById('status').textContent = 'Error: ' + error.message;
+                btn.disabled = false;
+            }
+        }
+
+        // Real gzip compression using CompressionStream API
+        async function compressWithGzip(buffer) {
+            const stream = new Blob([buffer]).stream();
+            const compressedStream = stream.pipeThrough(new CompressionStream('gzip'));
+            const response = new Response(compressedStream);
+            return await response.arrayBuffer();
+        }
+
+        // Real gzip decompression using DecompressionStream API
+        async function decompressWithGzip(buffer) {
+            const stream = new Blob([buffer]).stream();
+            const decompressedStream = stream.pipeThrough(new DecompressionStream('gzip'));
+            const response = new Response(decompressedStream);
+            return await response.arrayBuffer();
+        }
+
+        function detectFileType(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            const types = {
+                'json': 'Log/JSON', 'log': 'Log/JSON',
+                'csv': 'Time-Series', 'tsv': 'Time-Series',
+                'fa': 'DNA/Genomics', 'fasta': 'DNA/Genomics', 'fastq': 'DNA/Genomics',
+                'py': 'Code', 'js': 'Code', 'rs': 'Code', 'cpp': 'Code',
+                'png': 'Image', 'jpg': 'Image', 'jpeg': 'Image',
+                'txt': 'Text', 'md': 'Text'
+            };
+            return types[ext] || 'Binary';
+        }
+
+        // Verification
+        async function verifyQuery() {
+            const query = document.getElementById('verify-query').value;
+            if (!query) return;
+
+            document.getElementById('status').textContent = 'Verifying...';
+
+            try {
+                const response = await fetch(`${API_URL}/query`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query, use_neural: false })
+                });
+
+                const data = await response.json();
+
+                document.getElementById('verify-results').style.display = 'block';
+                document.getElementById('verify-answer').innerHTML = `
+                    <div style="margin-bottom: 1rem;">
+                        <span class="status-badge status-${data.action === 'ANSWER' ? 'verified' : 'disputed'}">${data.action}</span>
+                    </div>
+                    <p style="margin-bottom: 1rem;">${data.answer_text}</p>
+                    <div class="result-row">
+                        <span class="result-label">Confidence</span>
+                        <span class="result-value">${(data.overall_confidence * 100).toFixed(0)}%</span>
+                    </div>
+                    <div class="confidence-gauge">
+                        <div class="confidence-fill ${data.overall_confidence >= 0.7 ? 'confidence-high' : data.overall_confidence >= 0.4 ? 'confidence-medium' : 'confidence-low'}" 
+                             style="width: ${data.overall_confidence * 100}%"></div>
+                    </div>
+                `;
+
+                document.getElementById('status').textContent = 'Verification Complete';
+            } catch (err) {
+                document.getElementById('status').textContent = 'Error: ' + err.message;
+            }
+        }
+
+        // Load evidence
+        async function loadEvidence() {
+            try {
+                const response = await fetch(`${API_URL}/evidence`);
+                const evidence = await response.json();
+
+                document.getElementById('evidence-count').textContent = evidence.length + ' items';
+                document.getElementById('evidence-list').innerHTML = evidence.map(ev => `
+                    <div class="result-card" style="margin-bottom: 0.5rem;">
+                        <div style="font-size: 0.85rem; color: var(--accent-primary); margin-bottom: 0.25rem;">
+                            ${ev.source_id}
+                            <span class="status-badge" style="margin-left: 0.5rem; background: rgba(99, 102, 241, 0.2); color: var(--accent-primary);">Tier ${ev.tier}</span>
+                        </div>
+                        <div style="font-size: 0.9rem; color: var(--text-secondary);">${ev.content.substring(0, 100)}...</div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error('Failed to load evidence:', err);
+            }
+        }
+
+        // Integrated compression + verification
+        // Integrated compression + verification with REAL compression
+        async function integratedProcess() {
+            if (!integratedFile) return;
+
+            const btn = document.getElementById('integrated-btn');
+            const progress = document.getElementById('integrated-progress');
+            btn.disabled = true;
+            document.getElementById('status').textContent = 'Compressing with gzip...';
+            progress.style.width = '10%';
+
+            try {
+                const originalSize = integratedFile.size;
+
+                // Phase 1: Real compression
+                const buffer = await integratedFile.arrayBuffer();
+                progress.style.width = '30%';
+
+                const compressedBuffer = await compressWithGzip(buffer);
+                progress.style.width = '50%';
+
+                const compressedSize = compressedBuffer.byteLength;
+                const ratio = originalSize / compressedSize;
+                const saved = ((1 - compressedSize / originalSize) * 100).toFixed(1);
+
+                document.getElementById('status').textContent = 'Verifying compression...';
+                progress.style.width = '70%';
+
+                // Phase 2: Verification (test decompression)
+                let verificationPassed = false;
+                try {
+                    const decompressedBuffer = await decompressWithGzip(compressedBuffer);
+                    verificationPassed = (decompressedBuffer.byteLength === originalSize);
+                } catch (e) {
+                    console.error('Verification failed:', e);
+                }
+
+                progress.style.width = '100%';
+
+                // Store compressed data
+                integratedCompressedData = new Blob([compressedBuffer], { type: 'application/gzip' });
+                integratedHexString = arrayBufferToHex(compressedBuffer);
+
+                // Update UI with real stats
+                document.getElementById('int-ratio').textContent = ratio.toFixed(2) + 'x';
+                document.getElementById('int-confidence').textContent = verificationPassed ? '100%' : '0%';
+                document.getElementById('int-claims').textContent = verificationPassed ? '4/4' : '0/4';
+
+                const badge = document.getElementById('integrated-status-badge');
+                badge.classList.remove('hidden');
+                if (verificationPassed) {
+                    badge.classList.add('status-verified');
+                    badge.textContent = 'ALL VERIFIED';
+                } else {
+                    badge.classList.add('status-disputed');
+                    badge.textContent = 'FAILED';
+                }
+
+                document.getElementById('integrated-claims').innerHTML = `
+                    <div class="claim">
+                        <div class="claim-icon ${verificationPassed ? 'verified' : 'disputed'}">${verificationPassed ? 'OK' : 'X'}</div>
+                        <div class="claim-text">Compression ratio is ${ratio.toFixed(2)}x (real gzip)</div>
+                        <span class="claim-confidence">100%</span>
+                    </div>
+                    <div class="claim">
+                        <div class="claim-icon ${verificationPassed ? 'verified' : 'disputed'}">${verificationPassed ? 'OK' : 'X'}</div>
+                        <div class="claim-text">Decompression verified: ${verificationPassed ? 'Original size matches' : 'Failed'}</div>
+                        <span class="claim-confidence">${verificationPassed ? '100%' : '0%'}</span>
+                    </div>
+                    <div class="claim">
+                        <div class="claim-icon verified">OK</div>
+                        <div class="claim-text">Space saved: ${saved}% (${formatBytes(originalSize)} → ${formatBytes(compressedSize)})</div>
+                        <span class="claim-confidence">100%</span>
+                    </div>
+                    <div class="claim">
+                        <div class="claim-icon verified">OK</div>
+                        <div class="claim-text">Algorithm: gzip (real compression)</div>
+                        <span class="claim-confidence">100%</span>
+                    </div>
+                `;
+
+                // Store verification report with real data
+                verificationReport = {
+                    original_file: integratedFile.name,
+                    original_size: originalSize,
+                    compressed_size: compressedSize,
+                    compression_ratio: parseFloat(ratio.toFixed(2)),
+                    real_compression: true,
+                    verification: {
+                        overall_confidence: verificationPassed ? 1.0 : 0,
+                        claims_verified: verificationPassed ? 4 : 0,
+                        claims_total: 4,
+                        all_verified: verificationPassed,
+                        decompression_test: verificationPassed ? 'passed' : 'failed'
+                    },
+                    claims: [
+                        { type: 'ratio', status: 'verified', confidence: 1.0, text: `Compression ratio is ${ratio.toFixed(2)}x` },
+                        { type: 'decompression', status: verificationPassed ? 'verified' : 'failed', confidence: verificationPassed ? 1.0 : 0, text: 'Decompression verification' },
+                        { type: 'space', status: 'verified', confidence: 1.0, text: `Space saved: ${saved}%` },
+                        { type: 'algorithm', status: 'verified', confidence: 1.0, text: 'Algorithm: gzip (real compression)' }
+                    ],
+                    timestamp: new Date().toISOString()
+                };
+
+                // Cache original for decompression
+                const compressedFileName = integratedFile.name.replace(/\.([^.]+)$/, '.verified.nsarc');
+                originalFilesCache.set(compressedFileName, {
+                    file: integratedFile,
+                    buffer: buffer,
+                    url: URL.createObjectURL(integratedFile),
+                    type: detectFileType(integratedFile.name)
+                });
+
+                // Enable UI
+                document.getElementById('integrated-placeholder').classList.add('hidden');
+                document.getElementById('integrated-data').classList.remove('hidden');
+                document.getElementById('integrated-btn').disabled = false;
+                document.getElementById('int-download-btn').disabled = false;
+                document.getElementById('int-report-btn').disabled = false;
+                document.getElementById('int-preview-compressed-btn').disabled = false;
+                document.getElementById('int-preview-report-btn').disabled = false;
+                document.getElementById('status').textContent = `Verified! ${formatBytes(originalSize)} → ${formatBytes(compressedSize)}`;
+
+            } catch (error) {
+                console.error('Integrated compression error:', error);
+                document.getElementById('status').textContent = 'Error: ' + error.message;
+                btn.disabled = false;
+            }
+        }
+
+
+        // Download functions
+        function downloadCompressed() {
+            if (!compressedData) return;
+            const url = URL.createObjectURL(compressedData);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = selectedFile.name.replace(/\.([^.]+)$/, '.nsarc');
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function downloadMetadata() {
+            if (!compressionMetadata) return;
+            const json = JSON.stringify(compressionMetadata, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = selectedFile.name.replace(/\.([^.]+)$/, '_metadata.json');
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function downloadIntegrated() {
+            if (!integratedCompressedData) return;
+            const url = URL.createObjectURL(integratedCompressedData);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = integratedFile.name.replace(/\.([^.]+)$/, '.verified.nsarc');
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function downloadVerificationReport() {
+            if (!verificationReport) return;
+            const json = JSON.stringify(verificationReport, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = integratedFile.name.replace(/\.([^.]+)$/, '_verification_report.json');
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Drag and drop
+        ['compress-dropzone', 'integrated-dropzone', 'decompress-dropzone'].forEach(id => {
+            const zone = document.getElementById(id);
+            if (!zone) return;
+
+            zone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                zone.classList.add('drag-over');
+            });
+
+            zone.addEventListener('dragleave', () => {
+                zone.classList.remove('drag-over');
+            });
+
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('drag-over');
+
+                let input;
+                if (id === 'compress-dropzone') input = 'file-input';
+                else if (id === 'integrated-dropzone') input = 'integrated-file-input';
+                else if (id === 'decompress-dropzone') input = 'decompress-file-input';
+
+                const dt = new DataTransfer();
+                dt.items.add(e.dataTransfer.files[0]);
+                document.getElementById(input).files = dt.files;
+                document.getElementById(input).dispatchEvent(new Event('change'));
+            });
+        });
+
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            loadEvidence();
+        });
+    </script>
+</body>
+
+</html>

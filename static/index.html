@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="description" content="Evidence-Grounded Truth Verification AI">
+    <link rel="manifest" href="/static/manifest.json">
+    <link rel="apple-touch-icon" href="/static/icon-192.png">
+    <title>HALT-NN | Anti-Hallucination Chat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a25;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --accent-primary: #6366f1;
+            --accent-secondary: #8b5cf6;
+            --accent-success: #22c55e;
+            --accent-warning: #f59e0b;
+            --accent-danger: #ef4444;
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Background animation */
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(34, 197, 94, 0.05) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .logo h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .evidence-section {
+            margin-top: 1.5rem;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .section-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .evidence-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .evidence-item {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .evidence-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent-primary);
+        }
+
+        .evidence-source {
+            font-size: 0.8rem;
+            color: var(--accent-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .evidence-content {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .tier-badge {
+            display: inline-block;
+            padding: 0.125rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .tier-A {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--accent-success);
+        }
+
+        .tier-B {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--accent-warning);
+        }
+
+        .tier-C {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--accent-danger);
+        }
+
+        /* Main chat area */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-danger);
+        }
+
+        .status-dot.connected {
+            background: var(--accent-success);
+            box-shadow: 0 0 8px var(--accent-success);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .message {
+            max-width: 80%;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            align-self: flex-end;
+        }
+
+        .message-bubble {
+            padding: 1rem 1.25rem;
+            border-radius: 16px;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.user .message-bubble {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-bottom-right-radius: 4px;
+            border-bottom-left-radius: 16px;
+        }
+
+        .message.bot .message-bubble {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--glass-border);
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 16px;
+        }
+
+        /* Verification status */
+        .verification-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 0.75rem;
+        }
+
+        .verification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-ANSWER {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--accent-success);
+        }
+
+        .status-ABSTAIN {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--accent-danger);
+        }
+
+        .status-ANSWER_WITH_DISPUTE {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--accent-warning);
+        }
+
+        .confidence-gauge {
+            height: 6px;
+            background: var(--bg-secondary);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .confidence-high {
+            background: linear-gradient(90deg, var(--accent-success), #4ade80);
+        }
+
+        .confidence-medium {
+            background: linear-gradient(90deg, var(--accent-warning), #fbbf24);
+        }
+
+        .confidence-low {
+            background: linear-gradient(90deg, var(--accent-danger), #f87171);
+        }
+
+        /* Phase indicator */
+        .phases {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .phase {
+            padding: 0.25rem 0.5rem;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            transition: all 0.3s;
+        }
+
+        .phase.active {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        .phase.complete {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--accent-success);
+        }
+
+        /* Input area */
+        .input-container {
+            padding: 1.5rem 2rem;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 1rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 0.5rem;
+            transition: border-color 0.2s;
+        }
+
+        .input-wrapper:focus-within {
+            border-color: var(--accent-primary);
+        }
+
+        #query-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 0.75rem;
+            color: var(--text-primary);
+            font-size: 1rem;
+            outline: none;
+        }
+
+        #query-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .send-btn {
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.02);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Add evidence modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .modal h2 {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            border: 1px solid var(--glass-border);
+        }
+
+        .add-evidence-btn {
+            margin-top: 1rem;
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--glass-bg);
+            border: 1px dashed var(--glass-border);
+            border-radius: 8px;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .add-evidence-btn:hover {
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">🛡️</div>
+                <h1>HALT-NN</h1>
+            </div>
+
+            <div class="evidence-section">
+                <h3 class="section-title">Evidence Store</h3>
+                <div id="evidence-list" class="evidence-list">
+                    <!-- Evidence items will be loaded here -->
+                </div>
+                <button class="add-evidence-btn" onclick="showAddModal()">+ Add Evidence</button>
+            </div>
+        </aside>
+
+        <!-- Main area -->
+        <main class="main">
+            <header class="chat-header">
+                <div>
+                    <h2>Evidence-Grounded Chat</h2>
+                    <p style="color: var(--text-muted); font-size: 0.85rem;">
+                        Claims are verified against the evidence store
+                    </p>
+                </div>
+                <div class="connection-status">
+                    <div id="status-dot" class="status-dot"></div>
+                    <span id="status-text">Disconnected</span>
+                </div>
+            </header>
+
+            <div id="chat-messages" class="chat-messages">
+                <!-- Messages will appear here -->
+                <div class="message bot">
+                    <div class="message-bubble">
+                        <p>👋 Welcome to HALT-NN! I only make claims I can verify with evidence. Try asking me a
+                            question about Python.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-container">
+                <div class="input-wrapper">
+                    <input type="text" id="query-input" placeholder="Ask a question to verify..." autocomplete="off">
+                    <button id="send-btn" class="send-btn" onclick="sendQuery()">
+                        Verify
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Evidence Modal -->
+    <div id="add-modal" class="modal-overlay">
+        <div class="modal">
+            <h2>Add Evidence</h2>
+            <div class="form-group">
+                <label>Content</label>
+                <textarea id="ev-content" placeholder="Enter evidence text..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Source ID</label>
+                <input type="text" id="ev-source" placeholder="e.g., wikipedia.org/article">
+            </div>
+            <div class="form-group">
+                <label>Tier</label>
+                <select id="ev-tier">
+                    <option value="A">Tier A - Official/Peer-Reviewed</option>
+                    <option value="B" selected>Tier B - Reputable Journalism</option>
+                    <option value="C">Tier C - Blogs/Forums</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="hideAddModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="addEvidence()">Add Evidence</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = window.location.origin;
+        const WS_URL = `ws://${window.location.host}/ws/query`;
+
+        let ws = null;
+        let currentPhases = [];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadEvidence();
+            connectWebSocket();
+
+            document.getElementById('query-input').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendQuery();
+            });
+        });
+
+        // WebSocket connection
+        function connectWebSocket() {
+            ws = new WebSocket(WS_URL);
+
+            ws.onopen = () => {
+                document.getElementById('status-dot').classList.add('connected');
+                document.getElementById('status-text').textContent = 'Connected';
+            };
+
+            ws.onclose = () => {
+                document.getElementById('status-dot').classList.remove('connected');
+                document.getElementById('status-text').textContent = 'Disconnected';
+                setTimeout(connectWebSocket, 3000);
+            };
+
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                handleWSMessage(data);
+            };
+        }
+
+        // Handle WebSocket messages
+        function handleWSMessage(data) {
+            const messagesDiv = document.getElementById('chat-messages');
+
+            if (data.event === 'phase') {
+                updatePhaseIndicator(data.data.phase, data.data.name);
+            } else if (data.event === 'complete') {
+                // Remove phase indicator
+                const phaseDiv = document.querySelector('.phases');
+                if (phaseDiv) phaseDiv.remove();
+
+                // Add result message
+                addBotMessage(data.data);
+                document.getElementById('send-btn').disabled = false;
+            } else if (data.event === 'error') {
+                addErrorMessage(data.data.message);
+                document.getElementById('send-btn').disabled = false;
+            }
+        }
+
+        // Update phase indicator
+        function updatePhaseIndicator(phase, name) {
+            let phaseDiv = document.querySelector('.phases');
+
+            if (!phaseDiv) {
+                phaseDiv = document.createElement('div');
+                phaseDiv.className = 'phases';
+
+                const phases = ['Intent', 'Claims', 'Evidence', 'NLI', 'Verify', 'Generate', 'Calibrate'];
+                phases.forEach((p, i) => {
+                    const span = document.createElement('span');
+                    span.className = 'phase';
+                    span.textContent = p;
+                    span.dataset.phase = i + 1;
+                    phaseDiv.appendChild(span);
+                });
+
+                const msgDiv = document.createElement('div');
+                msgDiv.className = 'message bot';
+                msgDiv.innerHTML = '<div class="message-bubble"><p>Verifying...</p></div>';
+                msgDiv.querySelector('.message-bubble').prepend(phaseDiv);
+                document.getElementById('chat-messages').appendChild(msgDiv);
+            }
+
+            // Update phase states
+            phaseDiv.querySelectorAll('.phase').forEach(p => {
+                const pNum = parseInt(p.dataset.phase);
+                if (pNum < phase) {
+                    p.className = 'phase complete';
+                } else if (pNum === phase) {
+                    p.className = 'phase active';
+                } else {
+                    p.className = 'phase';
+                }
+            });
+        }
+
+        // Send query
+        function sendQuery() {
+            const input = document.getElementById('query-input');
+            const query = input.value.trim();
+
+            if (!query || !ws || ws.readyState !== WebSocket.OPEN) return;
+
+            // Add user message
+            addUserMessage(query);
+            input.value = '';
+            document.getElementById('send-btn').disabled = true;
+
+            // Send to WebSocket
+            ws.send(JSON.stringify({ query }));
+        }
+
+        // Add user message
+        function addUserMessage(text) {
+            const div = document.createElement('div');
+            div.className = 'message user';
+            div.innerHTML = `<div class="message-bubble"><p>${escapeHtml(text)}</p></div>`;
+            document.getElementById('chat-messages').appendChild(div);
+            scrollToBottom();
+        }
+
+        // Add bot message with verification
+        function addBotMessage(data) {
+            const div = document.createElement('div');
+            div.className = 'message bot';
+
+            const confClass = data.confidence >= 0.7 ? 'high' : data.confidence >= 0.4 ? 'medium' : 'low';
+
+            div.innerHTML = `
+                <div class="message-bubble">
+                    <p>${escapeHtml(data.answer_text)}</p>
+                    <div class="verification-card">
+                        <div class="verification-header">
+                            <span class="status-badge status-${data.action}">${data.action}</span>
+                            <span style="color: var(--text-muted); font-size: 0.8rem;">
+                                ${(data.processing_time_ms).toFixed(0)}ms
+                            </span>
+                        </div>
+                        <div class="confidence-gauge">
+                            <div class="confidence-fill confidence-${confClass}" style="width: ${data.confidence * 100}%"></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted);">
+                            <span>Confidence: ${(data.confidence * 100).toFixed(0)}%</span>
+                            <span>Coverage: ${(data.coverage * 100).toFixed(0)}%</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Remove the "Verifying..." message
+            const verifyingMsg = document.querySelector('.message.bot:last-child');
+            if (verifyingMsg && verifyingMsg.querySelector('.phases')) {
+                verifyingMsg.remove();
+            }
+
+            document.getElementById('chat-messages').appendChild(div);
+            scrollToBottom();
+        }
+
+        // Add error message
+        function addErrorMessage(text) {
+            const div = document.createElement('div');
+            div.className = 'message bot';
+            div.innerHTML = `<div class="message-bubble" style="border-color: var(--accent-danger);"><p>❌ ${escapeHtml(text)}</p></div>`;
+            document.getElementById('chat-messages').appendChild(div);
+            scrollToBottom();
+        }
+
+        // Load evidence
+        async function loadEvidence() {
+            try {
+                const res = await fetch(`${API_URL}/evidence`);
+                const evidence = await res.json();
+
+                const list = document.getElementById('evidence-list');
+                list.innerHTML = evidence.map(ev => `
+                    <div class="evidence-item">
+                        <div class="evidence-source">
+                            ${escapeHtml(ev.source_id)}
+                            <span class="tier-badge tier-${ev.tier}">Tier ${ev.tier}</span>
+                        </div>
+                        <div class="evidence-content">${escapeHtml(ev.content)}</div>
+                    </div>
+                `).join('');
+            } catch (e) {
+                console.error('Failed to load evidence:', e);
+            }
+        }
+
+        // Add evidence
+        async function addEvidence() {
+            const content = document.getElementById('ev-content').value;
+            const source = document.getElementById('ev-source').value;
+            const tier = document.getElementById('ev-tier').value;
+
+            if (!content || !source) return;
+
+            try {
+                await fetch(`${API_URL}/evidence`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content, source_id: source, tier })
+                });
+
+                hideAddModal();
+                loadEvidence();
+
+                document.getElementById('ev-content').value = '';
+                document.getElementById('ev-source').value = '';
+            } catch (e) {
+                alert('Failed to add evidence');
+            }
+        }
+
+        // Modal functions
+        function showAddModal() {
+            document.getElementById('add-modal').classList.add('show');
+        }
+
+        function hideAddModal() {
+            document.getElementById('add-modal').classList.remove('show');
+        }
+
+        // Utilities
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function scrollToBottom() {
+            const messages = document.getElementById('chat-messages');
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        // Register Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/static/sw.js')
+                    .then(reg => console.log('SW registered:', reg.scope))
+                    .catch(err => console.log('SW registration failed:', err));
+            });
+        }
+
+        // Install prompt for mobile
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            // Show install button (optional)
+            console.log('App installable');
+        });
+    </script>
+</body>
+
+</html>
